@@ -1,0 +1,77 @@
+# Homework 2 - Quantum Optics
+<p align="right">羊俊睿</p>
+<p align="right">S2020828170002</p>
+
+----
+<br>
+
+数值求解方程组：<br><br>
+$i\hbar\frac{d}{dt}C_i(t)=w\sum_k e^{-ik\epsilon t/\hbar}C_k(t)$<br>
+$i\hbar\frac{d}{dt}C_k(t)=we^{ik\epsilon t/\hbar}C_i(t)$
+<br></br>
+**(1)取$\hbar=1$,$w=1$,$\epsilon=1$，时间的范围为$t=[1,10]$,在 $-100\leq k \leq 100$情况下进行数值求解。**<br>
+**(2)画出$P_i(t)$,以及$t=10$时的 $P_k(t)$随 $k$的分布，并将数值结果与Weisskopf-Wigner方法得到的结果相比较。**</br>
+**(3)当k的取值是$-10\leq k \leq 10$;$-0\leq k \leq 10$;$10\leq k \leq 20$时，画出 $P_i(t)$。**<br></br>
+解：用Matlab求解，代码如下
+~~~Matlab
+global a left right ;
+left = -100;
+right = 100;%输入k的左右界
+a = right - left + 2 ;%确定方程组个数
+
+tspan = [0 10];
+C0=zeros(a,1);
+C0(1,1)=1;%给出初始条件
+
+[t,Ct]=ode45(@myfunc,tspan,C0);%数值求解myfunc
+Pt = abs(Ct).^2;%得到每个态的概率
+
+
+figure(1);
+plot(t,Pt(:,:));
+%所有态随时间的演化
+
+figure(2)
+plot(t,Pt(:,1));
+%画出P_i(t)
+
+figure(3);
+K = [left:1:right];
+plot(K,Pt(end,2:a),'*b');
+%画出P_k(t=10)的分布图
+
+
+function [Ctdt]=myfunc(t,Ct)
+global a left right;
+U=zeros(a,a);
+    for k = left:right
+        U(k-left+2,1)=-1i*exp(1i*k*t);
+        U(1,k-left+2)=-1i*exp(-1i*k*t);
+    end
+Ctdt = U*Ct;
+end%用演化矩阵U表示微分方程
+
+function [Pk] = W_K(k) 
+Pk = 1./(k.^2+pi^2);
+end%Weisskopf-Wigner方法得到的P_k(t)函数
+~~~
+
+- $P_k(t=10)$的数值结果与Weisskopf-Wigner方法结果的比较：
+
+![图 2](https://lihua33.coding.net/p/coding-devops-guide/d/lihua33imagelib/git/raw/master/./imageForMarkdown/Lecture2Homework_20210317131046.png)  
+
+- $P_i(t)$随时间的变化如下：<br><br>
+$-100\leq k \leq 100$:
+![图 1](https://lihua33.coding.net/p/coding-devops-guide/d/lihua33imagelib/git/raw/master/./imageForMarkdown/Lecture2Homework_20210317130559.png) 
+
+<br></br>
+$-10\leq k \leq 10$ :
+![图 3](https://lihua33.coding.net/p/coding-devops-guide/d/lihua33imagelib/git/raw/master/./imageForMarkdown/Lecture2Homework_20210317131746.png)  
+
+<br></br>
+$0\leq k \leq 10$:
+![图 4](https://lihua33.coding.net/p/coding-devops-guide/d/lihua33imagelib/git/raw/master/./imageForMarkdown/Lecture2Homework_20210317132301.png)  
+
+<br></br>
+$10\leq k \leq 20$:
+![图 5](https://lihua33.coding.net/p/coding-devops-guide/d/lihua33imagelib/git/raw/master/./imageForMarkdown/Lecture2Homework_20210317132402.png)  
