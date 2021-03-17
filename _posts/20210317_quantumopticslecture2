@@ -38,6 +38,9 @@ plot(t,Pt(:,1));
 figure(3);
 K = [left:1:right];
 plot(K,Pt(end,2:a),'*b');
+hold on;
+plot(K,W_K(K),'r');
+hold off;
 %画出P_k(t=10)的分布图
 
 
